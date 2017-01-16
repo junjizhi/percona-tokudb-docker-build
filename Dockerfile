@@ -29,8 +29,6 @@ RUN apt-get install -y percona-server-server-5.6 percona-server-client-5.6 perco
 RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
 RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
-
-
 RUN apt-get install -y libjemalloc1 libjemalloc-dev
 #RUN sed -i -- "s/[mysqld_safe]/[mysqld_safe]malloc-lib= /usr/include/jemalloc/g" /etc/mysql/my.cnf
 RUN sed -i -- '/\[mysqld_safe\]/a malloc-lib = /usr/include/jemalloc' /etc/mysql/my.cnf
