@@ -24,10 +24,8 @@ RUN echo "percona-server-server-5.6 percona-server-server/root_password_again pa
 RUN echo "percona-server-server-5.6 percona-server-server/root_password password dbpass" | debconf-set-selections
 RUN apt-get install -y percona-server-server-5.6 percona-server-client-5.6 percona-server-common-5.6
 
-RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
-RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
-
-RUN service mysql start
+#RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
+#RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
 RUN apt-get install -y libjemalloc1 libjemalloc-dev
 # Need this line otherwise mysql complains include dir not in /usr/lib/
@@ -42,9 +40,6 @@ RUN apt-get install -y percona-server-tokudb-5.6
 RUN apt-get autoclean -y && \
     apt-get autoremove -y && \
         apt-get clean -y
-
-# update mysql root password to null
-RUN service mysql restart
 
 #CMD service mysql start && tail -F /var/log/mysql/error.log
 COPY ./docker-entrypoint.sh /
