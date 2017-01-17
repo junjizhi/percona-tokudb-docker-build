@@ -6,19 +6,18 @@ MAINTAINER Junji Zhi <jzhi316@gmail.com>
 #percona database with tokudb plugin
 #percona 5.6 server database with tokudb plugin
 
-RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+# RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
 
-USER docker
+USER root
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
     	    apt-get autoclean -y && \
 	    	    apt-get autoremove -y && \
 		        apt-get -y clean
 
 RUN apt-get install -y wget
 
-RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 8507EFA5
 
 RUN echo "deb http://repo.percona.com/apt "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/percona.list
 
@@ -38,7 +37,7 @@ RUN sed -i -- '/\[mysqld_safe\]/a malloc-lib = /usr/include/jemalloc' /etc/mysql
 
 RUN apt-get install -y percona-server-tokudb-5.6
 
-RUN service mysql restart
+RUN service mysql stop
 
 ##################################################################
 ###############       Readme: enable tokudb    ###################
@@ -55,12 +54,10 @@ RUN apt-get autoclean -y && \
     apt-get autoremove -y && \
         apt-get clean -y
 
-CMD service mysql start && tail -F /var/log/mysql/error.log
-CMD /etc/rc2.d/S19mysql start
-
 # update mysql root password to null
-RUN service mysql stop
-RUN mysqld_safe
-CMD mysql --user=root -e "update mysql.user set password=null where User='root';" exit 0;
-CMD mysql --user=root -e "flush privileges;" exit 0;
-RUN service mysql restart
+#RUN service mysql stop
+#RUN mysqld_safe
+#CMD mysql --user=root -e "update mysql.user set password=null where User='root';" exit 0;
+#CMD mysql --user=root -e "flush privileges;" exit 0;
+#RUN service mysql restart
+ENTRYPOINT mysqld
