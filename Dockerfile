@@ -24,8 +24,8 @@ RUN echo "percona-server-server-5.6 percona-server-server/root_password_again pa
 RUN echo "percona-server-server-5.6 percona-server-server/root_password password dbpass" | debconf-set-selections
 RUN apt-get install -y percona-server-server-5.6 percona-server-client-5.6 percona-server-common-5.6
 
-RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
-RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+#RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
+#RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
 RUN service mysql start
 
@@ -35,7 +35,9 @@ RUN cp /usr/include/jemalloc/jemalloc.h /usr/lib/
 
 RUN apt-get install -y percona-server-tokudb-5.6
 
-RUN ps_tokudb_admin --enable -u root -pdbpass
+RUN service mysql restart
+
+RUN ps_tokudb_admin --enable -uroot -pdbpass
 
 #Clean system
 RUN apt-get autoclean -y && \
