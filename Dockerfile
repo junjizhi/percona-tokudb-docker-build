@@ -1,4 +1,4 @@
-FROM ubuntu-debootstrap:precise
+FROM ubuntu-debootstrap:trusty
 MAINTAINER Junji Zhi <jzhi316@gmail.com>
 
 # adapted from https://github.com/topdevbox/dockercraft/blob/master/dockerfiles/ubuntu/percona/Dockerfile
