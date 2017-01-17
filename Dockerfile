@@ -1,14 +1,10 @@
-FROM ubuntu-debootstrap:trusty
+FROM ubuntu:trusty
 MAINTAINER Junji Zhi <jzhi316@gmail.com>
 
 # adapted from https://github.com/topdevbox/dockercraft/blob/master/dockerfiles/ubuntu/percona/Dockerfile
 
 #percona database with tokudb plugin
 #percona 5.6 server database with tokudb plugin
-
-RUN apt-get update && \
-      apt-get -y install sudo && \
-      	      apt-get -y install echo
 
 RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
 
@@ -38,7 +34,6 @@ RUN sed -i -- "s/bind-address/#bind-address/g" /etc/mysql/my.cnf
 RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
 RUN apt-get install -y libjemalloc1 libjemalloc-dev
-#RUN sed -i -- "s/[mysqld_safe]/[mysqld_safe]malloc-lib= /usr/include/jemalloc/g" /etc/mysql/my.cnf
 RUN sed -i -- '/\[mysqld_safe\]/a malloc-lib = /usr/include/jemalloc' /etc/mysql/my.cnf
 
 RUN apt-get install -y percona-server-tokudb-5.6
@@ -62,5 +57,10 @@ RUN apt-get autoclean -y && \
 
 CMD service mysql start && tail -F /var/log/mysql/error.log
 CMD /etc/rc2.d/S19mysql start
-CMD mysql --user=root --password=dbpassword -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'dbpassword' WITH GRANT OPTION;"; exit 0
-CMD mysql --user=root --password=dbpassword -e "FLUSH PRIVILEGES;"; exit 0
+
+# update mysql root password to null
+RUN service mysql stop
+RUN mysqld_safe
+CMD mysql --user=root -e "update mysql.user set password=null where User='root';" exit 0;
+CMD mysql --user=root -e "flush privileges;" exit 0;
+RUN service mysql restart
