@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# copy from https://raw.githubusercontent.com/docker-library/percona/master/5.6/docker-entrypoint.sh
+# Adapted from https://raw.githubusercontent.com/docker-library/percona/master/5.6/docker-entrypoint.sh
+
+##### Adaptation begins #######
+echo "Disable Transparent Huge Paging (Needed for tokuDB)"
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+##### Adaptation ends  #######
+
 
 set -eo pipefail
 shopt -s nullglob

@@ -87,14 +87,14 @@ RUN \
 	&& mv /tmp/my.cnf "$myCnf"
 
 # install tokuDB
-RUN apt-get install -y libjemalloc1 libjemalloc-dev
+RUN apt-get update && apt-get install -y libjemalloc1 libjemalloc-dev
 # Need this line otherwise mysql complains include dir not in /usr/lib/
 RUN cp /usr/include/jemalloc/jemalloc.h /usr/lib/
 RUN apt-get install -y percona-server-tokudb-5.6
 # need to run this when we want to enable tokudb
 #RUN ps_tokudb_admin --enable -u root -pdbpass
 
-VOLUME ["/var/lib/mysql", "/var/log/mysql"]
+VOLUME ["/var/lib/mysql", "/var/log/mysql", "/etc/mysql/conf.d"]
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
