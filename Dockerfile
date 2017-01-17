@@ -7,6 +7,14 @@ MAINTAINER Junji Zhi <jzhi316@gmail.com>
 #percona 5.6 server database with tokudb plugin
 
 RUN apt-get update && \
+      apt-get -y install sudo && \
+      	      apt-get -y install echo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+USER docker
+
+RUN apt-get update && \
     apt-get upgrade -y && \
     	    apt-get autoclean -y && \
 	    	    apt-get autoremove -y && \
